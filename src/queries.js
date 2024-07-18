@@ -11,13 +11,13 @@ export const query2 = await Animal.findOne({
 
 // Get all animals belonging to the human with primary key 5
 export const query3 = await Animal.findAll({
-  where: { human_id: 5 },
+  where: { humanId: 5 },
 });
 
 // Get all animals born in a year greater than (but not equal to) 2015.
 export const query4 = await Animal.findAll({
   where: {
-    birth_year: {
+    birthYear: {
       [Op.gt]: 2015,
     },
   },
@@ -35,7 +35,7 @@ export const query5 = await Human.findAll({
 // Get all the animals who don't have a birth year
 export const query6 = await Animal.findAll({
   where: {
-    birth_year: {
+    birthYear: {
       [Op.is]: null,
     },
   },
@@ -64,19 +64,23 @@ export const query8 = await Human.findAll({
 // Print a directory of humans and their animals
 export async function printHumansAndAnimals() {
   const humans = await Human.findAll({
-    include: Animal,
+    include: {
+        model: Animal,
+        attributes: ['name', 'species']
+    }
   });
 
   let output = "";
 
   for (const human of humans) {
-    output += `${human.getFullName}\n`;
+    output += `${human.getFullName()}\n`;
     if (human.animals && human.animals.length > 0) {
       for (const animal of human.animals) {
         output += `- ${animal.name}, ${animal.species}\n`;
       }
     }
   }
+  console.log(output);
   return output;
 }
 
